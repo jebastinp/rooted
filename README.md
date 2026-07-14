@@ -1,1270 +1,1511 @@
-# rooted
+# **Enterprise Multi-Tenant Bible Reading Progress Tracker - Complete System Architecture Prompt**
 
+Build the existing **Bible Reading Progress Tracker** into a **production-ready, enterprise-grade, multi-tenant SaaS platform** that supports multiple churches, ministries, fellowships, Bible study groups, and organizations. The platform must be scalable, secure, and architected using modern SaaS principles with complete tenant isolation.
 
+The application must have **three primary roles**:
 
-PROJECT BRAND
-Application Name
+* **Super User (Platform Owner)**
+* **Admin (Church/Fellowship Leader)**
+* **Member (Church Member)**
 
-Rooted
+Every organization is completely isolated from one another. One Admin must never be able to view or access another Admin's members or data. The Super User has complete platform access.
 
-Tagline
+---
 
-Rooted in God's Word.
-Growing Every Day.
+# Overall Architecture
 
-Logo
+```
+Platform (Rooted)
 
-Use the uploaded Rooted logo.
+                    Super User
+                         │
+      ┌──────────────────┼──────────────────┐
+      │                  │                  │
+   Church A           Church B          Church C
+    Admin               Admin             Admin
+      │                  │                  │
+ ┌────┴────┐        ┌────┴────┐       ┌────┴────┐
+Member A1 A2       Member B1 B2      Member C1 C2
+```
 
-Brand Colors
+Each Admin owns an independent workspace.
 
-Primary
-#0B5D3B
+Each workspace contains:
 
-Secondary
-#79C141
+* Members
+* Reading Plans
+* Reading Progress
+* Streaks
+* Rewards
+* Announcements
+* Reports
+* Leaderboards
+* Dashboard
+* Settings
 
-Accent
-#A8D672
+No data can ever be shared across Admin workspaces.
 
-Background
-#F8F4EC
+---
 
-Surface
-#FFFFFF
+# Authentication
 
-Text
-#1B1B1B
+## Super User Authentication
 
-Secondary Text
-#6B7280
+Authenticate using Supabase Authentication.
 
+Login using:
 
-# MASTER_PROMPT.md
+* Gmail
+* Email
+* Password
 
-# Bible Reading Tracker 2026 (Production Ready)
-
-You are an Expert Software Architect, Senior Full Stack Engineer, UI/UX Designer, Database Architect and DevOps Engineer.
-
-I want you to build an ENTIRE production-ready application from scratch.
-
-Do NOT generate sample code.
-
-Do NOT generate placeholders.
-
-Do NOT leave TODOs.
-
-Everything must work.
-
-The final output must be a COMPLETE project.
-
-------------------------------------------------------------
-
-# PROJECT NAME
-
-Bible Reading Tracker 2026
-
-------------------------------------------------------------
-
-# PURPOSE
-
-This is NOT a Bible App.
-
-Users already own physical Bibles or use Bible apps.
-
-This application ONLY tracks daily Bible reading progress.
-
-The church follows one reading plan for the whole year.
-
-Members simply mark today's reading as completed.
-
-------------------------------------------------------------
-
-# TARGET USERS
-
-Church Members
-
-Youth Fellowship
-
-Leaders
-
-Admins
-
-Super Admin
-
-------------------------------------------------------------
-
-# PLATFORM
-
-Mobile-first Responsive Web App
-
-Must work perfectly on
-
-Android Chrome
-
-iPhone Safari
-
-Desktop
-
-Tablet
-
-PWA Ready
-
-------------------------------------------------------------
-
-# TECHNOLOGY STACK
-
-Frontend
-
-React 19
-Vite
-TypeScript
-TailwindCSS
-Shadcn UI
-React Router
-TanStack Query
-React Hook Form
-Framer Motion
-
-Backend
-
-FastAPI
-Python 3.12
-SQLAlchemy
-Alembic
-Pydantic
-
-Database
-
-Supabase PostgreSQL
-
-Authentication
-
-JWT
-
-User ID Login
-
-NO PASSWORD
-
-NO OTP
-
-NO EMAIL
-
-NO GOOGLE LOGIN
-
-------------------------------------------------------------
-
-# LOGIN FLOW
-
-User enters
-
-User ID
+The Super User logs into a dedicated platform dashboard.
 
 Example
 
-REH001
+```
+super@rooted.app
+********
+```
 
-Backend checks database.
+---
 
-If valid
+## Admin Authentication
 
-Create JWT
+Authenticate using Supabase Authentication.
 
-Store session
+Each Admin has:
 
-User stays logged in.
+* Email
+* Password
 
-Logout available.
+created by the Super User.
 
-Admin also logs in using User ID.
+Example
 
-Role determines access.
+```
+pastorjohn@church.org
+********
+```
 
-------------------------------------------------------------
+Admins log into the Admin Portal.
 
-# USER ROLES
+---
 
-Member
+## Member Authentication
 
-Leader
+Members do not use Supabase Authentication.
 
-Admin
+Members login using:
 
-Super Admin
+Member ID
 
-------------------------------------------------------------
+or
 
-# MOBILE NAVIGATION
+Email (future support)
 
-Bottom Navigation
+Example
 
-🏠 Home
+```
+Member ID
 
-📈 Progress
+ROOT-000123
+Password
+```
 
-👥 Community
+The Admin creates Member accounts.
 
-👤 Profile
+---
 
-------------------------------------------------------------
+# Role Hierarchy
 
-# USER FEATURES
+```
+Super User
+      │
+Creates
+      ▼
+Admins
+      │
+Owns
+      ▼
+Members
+      │
+Reads
+      ▼
+Bible Reading Plan
+      │
+Creates
+      ▼
+Reading Progress
+```
 
-## HOME
+---
 
-Modern premium dashboard.
+# SUPER USER RESPONSIBILITIES
 
-Contains
+The Super User is the platform owner.
 
-Good Morning
+The Super User manages the entire SaaS platform.
 
-User Name
+The Super User never creates Members.
 
-Today's Reading
+The Super User only manages Admins.
 
-Day Number
+The Super User has unrestricted access.
 
-Date
+Features:
 
-Old Testament Chapters
+## Dashboard
 
-New Testament Chapters
+Platform Statistics
 
-Estimated Reading Time
-
-Large "Mark as Completed" button
-
-Current Streak
-
-Overall Progress
-
-Top 5 Readers
-
-Verse of the Day
-
-Church Announcement
-
-Beautiful UI
-
-------------------------------------------------------------
-
-## MARK AS COMPLETED
-
-One click.
-
-If already completed
-
-Disable button
-
-Show Completed badge.
-
-Update
-
-Progress
-
-Leaderboard
-
-Statistics
-
-Current Streak
-
-Completion %
-
-------------------------------------------------------------
-
-## PROGRESS PAGE
-
-Show
-
-Overall %
-
-Current Streak
-
-Longest Streak
-
-Days Completed
-
-Weekly Progress
-
-Monthly Progress
-
-Books Completed
-
-OT Progress
-
-NT Progress
-
-Achievement Cards
-
-Calendar Heatmap
-
-Beautiful graphs
-
-------------------------------------------------------------
-
-## COMMUNITY PAGE
-
-Leaderboard
-
-Top Readers
-
-Announcements
-
-Birthdays
-
-Today's Readers
-
-Community Statistics
-
-NO CHAT
-
-NO COMMENTS
-
-NO POSTS
-
-NO AUDIO
-
-------------------------------------------------------------
-
-## PROFILE
-
-Photo
-
-User ID
-
-Role
-
-Joined Date
-
-Current Streak
-
-Days Completed
-
-Overall Progress
-
-Achievements
-
-Settings
-
-Logout
-
-------------------------------------------------------------
-
-# ADMIN PANEL
-
-Responsive Dashboard
-
-Desktop First
-
-------------------------------------------------------------
-
-## DASHBOARD
-
-Cards
-
-Total Members
-
-Today's Readers
-
-Completion %
-
-Current Reading Day
-
-Current Streak
+* Total Churches
+* Total Admins
+* Total Members
+* Active Members
+* Active Reading Plans
+* Today's Completed Readings
+* Weekly Completion
+* Monthly Completion
+* Reading Streak Statistics
+* Total Announcements
+* Total Rewards
+* Platform Usage
+* New Registrations
+* Active Organizations
 
 Charts
 
-Reading Completion
+* Member Growth
+* Reading Completion Trend
+* Organization Growth
+* Active Users
+* Daily Usage
+* Monthly Activity
+
+---
+
+## Admin Management
+
+Create Admin
+
+Edit Admin
+
+Deactivate Admin
+
+Suspend Admin
+
+Delete Admin
+
+Reset Password
+
+Assign Organization
+
+Assign Church Name
+
+Assign Fellowship
+
+Assign Ministry
+
+Assign Subscription
+
+Assign Plan
+
+Assign Limits
+
+View Login History
+
+View Activity Logs
+
+Impersonate Admin
+
+---
+
+## Organization Management
+
+View every organization
+
+Search organizations
+
+Filter organizations
+
+View organization statistics
+
+View organization reports
+
+Deactivate organizations
+
+---
+
+## Member Monitoring
+
+View every member
+
+Search members
+
+Filter members
+
+View reading history
+
+View reading streak
+
+View activity
+
+View reports
+
+Reset Member Password
+
+Deactivate Member
+
+---
+
+## Reading Plan Monitoring
+
+View every reading plan
+
+Edit any reading plan
+
+Delete reading plans
+
+Assign templates
+
+Monitor completion
+
+---
+
+## Reports
+
+Global Reports
+
+Organization Reports
+
+Admin Reports
+
+Reading Reports
+
+Leaderboard Reports
+
+Growth Reports
+
+CSV Export
+
+Excel Export
+
+PDF Export
+
+---
+
+## Platform Settings
+
+Authentication
+
+Branding
+
+Notifications
+
+Maintenance Mode
+
+System Logs
+
+Audit Logs
+
+Platform Configuration
+
+Feature Flags
+
+Email Configuration
+
+Backups
+
+---
+
+# ADMIN RESPONSIBILITIES
+
+Each Admin represents one independent Church.
+
+Examples
+
+Grace Church
+
+Faith Fellowship
+
+Hope Ministries
+
+Youth Fellowship
+
+Bible Study Group
+
+Each Admin only manages their own members.
+
+An Admin cannot access another Admin.
+
+Everything belongs to one Admin.
+
+---
+
+## Admin Dashboard
+
+Dashboard Cards
+
+Total Members
+
+Today's Reading Completion
 
 Weekly Completion
 
 Monthly Completion
 
-Recent Activities
+Reading Percentage
 
-Top Readers
+Current Reading Plan
+
+Reading Streaks
+
+Inactive Members
 
 Announcements
 
-------------------------------------------------------------
+Rewards
 
-## MEMBER MANAGEMENT
+Leaderboards
 
-Search
+Recent Activity
 
-Filters
+Charts
 
-Pagination
+Daily Reading
 
-Add Member
+Monthly Reading
 
-Edit Member
+Member Growth
 
-Deactivate Member
+Completion %
 
-Delete Member
+Reading Heatmap
 
-Bulk Import
+Streak Analysis
 
-Export
+---
 
-------------------------------------------------------------
+## Member Management
 
-Each member has
+Create Members
 
-Name
+Edit Members
 
-User ID
+Delete Members
 
-Role
+Deactivate Members
 
-Phone
+Reactivate Members
 
-Status
+Import CSV
 
-Joined Date
+Bulk Create Members
+
+Reset Password
+
+Assign Member ID
+
+Assign Reading Plan
+
+Assign Groups
+
+Assign Departments
+
+Assign Family
+
+View Member Activity
+
+---
+
+## Reading Plan Management
+
+Create Plans
+
+Edit Plans
+
+Delete Plans
+
+Assign Plans
+
+Duplicate Plans
+
+Import Plans
+
+Export Plans
+
+Future Plans
+
+Calendar View
+
+Schedule Reading
+
+Automatic Publishing
+
+---
+
+## Reading Progress
+
+Track Daily Reading
+
+Track Completion
+
+Track Missed Days
+
+Track Streak
+
+Track Percentage
+
+View History
+
+View Analytics
+
+---
+
+## Rewards
+
+Create Rewards
+
+Milestones
+
+Badges
+
+Achievements
+
+Streak Rewards
+
+Monthly Rewards
+
+Yearly Rewards
+
+---
+
+## Leaderboard
+
+Top Readers
+
+Weekly
+
+Monthly
+
+Yearly
+
+Most Consistent
+
+Longest Streak
+
+Perfect Attendance
+
+---
+
+## Announcements
+
+Create Announcement
+
+Edit Announcement
+
+Delete Announcement
+
+Schedule Announcement
+
+Pin Announcement
+
+Urgent Announcement
+
+---
+
+## Reports
+
+Reading Reports
+
+Attendance Reports
+
+Completion Reports
+
+Member Reports
+
+Leaderboard Reports
+
+CSV Export
+
+Excel Export
+
+PDF Export
+
+---
+
+## Settings
+
+Church Details
+
+Logo
+
+Profile
+
+Password
+
+Notifications
+
+Reading Preferences
+
+Theme
+
+Backup
+
+---
+
+# MEMBER RESPONSIBILITIES
+
+Each Member belongs to exactly ONE Admin.
+
+Members cannot move between organizations unless transferred.
+
+Members only access their own information.
+
+---
+
+## Member Dashboard
+
+Today's Reading
 
 Progress
 
 Current Streak
 
-------------------------------------------------------------
-
-## READING PLAN
-
-Table
-
-Day
-
-Date
-
-Old Testament
-
-New Testament
-
-Estimated Minutes
-
-Edit
-
-Delete
-
-Add Day
-
-Search
-
-Pagination
-
-------------------------------------------------------------
-
-## REPORTS
-
-Reading Completion
-
-Daily Reports
-
-Weekly Reports
-
-Monthly Reports
-
-Member Reports
-
-Leaderboards
-
-Export Excel
-
-------------------------------------------------------------
-
-## ANNOUNCEMENTS
-
-CRUD
-
-Title
-
-Description
-
-Date
-
-Expiry
-
-Visibility
-
-------------------------------------------------------------
-
-## SETTINGS
-
-Church Name
-
-Church Logo
-
-Reading Year
-
-General Settings
-
-------------------------------------------------------------
-
-# CSV IMPORT
-
-Very Important
-
-There are NO CSV files now.
-
-Later I will upload them.
-
-Therefore create the feature.
-
-CSV Import Wizard.
-
-Supports
-
-users.csv
-
-reading_plan.csv
-
-progress.csv
-
-Each upload should
-
-Validate
-
-Preview
-
-Import
-
-Rollback on Error
-
-Show statistics
-
-Skip duplicates
-
-Upsert existing rows
-
-------------------------------------------------------------
-
-users.csv
-
-Will contain
-
-User ID
-
-Name
-
-Role
-
-Phone
-
-Joined Date
-
-------------------------------------------------------------
-
-reading_plan.csv
-
-Contains
-
-Day
-
-Date
-
-Old Testament
-
-New Testament
-
-Estimated Minutes
-
-------------------------------------------------------------
-
-progress.csv
-
-Contains
-
-User ID
-
-Day
-
-Completed
-
-Completed Date
-
-------------------------------------------------------------
-
-After importing
-
-Automatically calculate
-
-Current Streak
-
 Longest Streak
 
-Overall %
+Reading Percentage
 
-Leaderboard
+Achievements
 
-Statistics
-
-Everything.
-
-------------------------------------------------------------
-
-# DATABASE
-
-Design proper normalized schema.
-
-Include
-
-Users
-
-Reading Plan
-
-Reading Progress
+Rewards
 
 Announcements
 
-Settings
+Upcoming Reading
 
-Roles
+Reading Calendar
 
-Audit Logs
+Recent Activity
 
-------------------------------------------------------------
+Profile
 
-Use
+---
 
-UUID Primary Keys
+## Member Features
 
-Indexes
+Mark Reading Complete
 
-Foreign Keys
+View Today's Reading
 
-Constraints
+View Previous Reading
 
-------------------------------------------------------------
+View Reading Calendar
 
-# SUPABASE
+View Streak
 
-I'll paste
+View Progress
 
-SUPABASE_URL
+View Rewards
 
-SUPABASE_ANON_KEY
+View Achievements
 
-later.
+View Leaderboard
 
-Everything should already support Supabase.
+Receive Announcements
 
-------------------------------------------------------------
+Edit Profile
 
-# UI
+Change Password
 
-Use uploaded reference images.
+Dark Mode
 
-DO NOT COPY.
+Notifications
 
-Use them only as inspiration.
+---
 
-Make everything cleaner.
+# Database Design
 
-More premium.
+The application must be fully multi-tenant.
 
-More modern.
+Every table (except platform tables) must include:
 
-Apple-level UI.
+```
+admin_id UUID NOT NULL
+```
 
-Not Material Design.
+Example Tables
 
-Rounded Cards
+Admins
 
-Soft Shadows
+```
+id
+email
+password
+church_name
+status
+created_at
+```
 
-Beautiful Typography
+Members
 
-Responsive
+```
+id
+admin_id
+member_id
+name
+email
+phone
+gender
+dob
+status
+created_at
+```
 
-Animations
+Reading Plans
 
-------------------------------------------------------------
+```
+id
+admin_id
+title
+date
+chapter
+book
+created_at
+```
 
-# PERFORMANCE
+Reading Progress
 
-Lazy Loading
+```
+id
+admin_id
+member_id
+plan_id
+completed
+completed_at
+```
 
-Image Optimization
+Announcements
 
-Pagination
+```
+id
+admin_id
+title
+description
+published_at
+```
 
-Code Splitting
+Rewards
 
-Caching
+```
+id
+admin_id
+title
+badge
+points
+```
 
-Optimized Queries
+Leaderboards
 
-------------------------------------------------------------
+```
+id
+admin_id
+member_id
+rank
+score
+```
 
-# SECURITY
+Every query must filter using:
 
-JWT
+```
+WHERE admin_id = current_admin_id
+```
 
-Role Based Access
+---
 
-Protected Routes
+# Security
 
-Input Validation
+Implement enterprise-grade security.
 
-Rate Limiting
+Supabase Authentication
 
-Secure APIs
+JWT Authentication
 
-Environment Variables
+Refresh Tokens
 
-------------------------------------------------------------
+Secure Sessions
 
-# API
+Password Hashing
 
-REST API
+Role-Based Access Control (RBAC)
 
-Proper HTTP Status Codes
+Row Level Security (RLS)
 
-Validation
+Tenant Isolation
 
-Swagger
+API Authorization
 
-------------------------------------------------------------
+Backend Authorization
 
-# CODE QUALITY
+Never trust frontend permissions.
 
-Professional Folder Structure
+Every API endpoint must validate permissions.
 
-Reusable Components
+---
 
-Reusable Hooks
+# Row Level Security
 
-Reusable Services
+Super User
 
-Reusable APIs
+Can access every record.
 
-Reusable Utilities
+Admin
 
-Clean Architecture
+Can only access records where:
 
-Zero duplicate code
+```
+admin_id = current_admin
+```
 
-------------------------------------------------------------
+Member
 
-# TESTING
+Can only access:
 
-Frontend
+Own Profile
 
-Backend
+Own Reading Progress
 
-Validation
+Own Rewards
 
-CSV Import
+Own Announcements
 
-API
+Own Reading Plan
 
-------------------------------------------------------------
+Nothing else.
 
-# README
+---
 
-Complete Documentation
+# Navigation
 
-Installation
+## Super User Portal
 
-Environment Variables
+Dashboard
 
-Supabase Setup
+Organizations
 
-Run Commands
+Admins
 
-Deployment
-
-CSV Import Guide
-
-------------------------------------------------------------
-
-# OUTPUT
-
-The FINAL OUTPUT MUST be a SINGLE ZIP PROJECT.
-
-The ZIP should contain EVERYTHING.
-
-Project Structure
-
-bible-reading-tracker/
-
-frontend/
-
-admin/
-
-backend/
-
-database/
-
-supabase/
-
-public/
-
-assets/
-
-README.md
-
-.env.example
-
-package.json
-
-requirements.txt
-
-docker-compose.yml
-
-------------------------------------------------------------
-
-# IMPORTANT
-
-Do NOT stop midway.
-
-Do NOT split responses.
-
-Do NOT ask questions.
-
-Generate the ENTIRE production-ready project.
-
-Everything should compile.
-
-Everything should run.
-
-Everything should be connected.
-
-Every page should work.
-
-Every API should work.
-
-Every database connection should work.
-
-Every CRUD should work.
-
-Every import should work.
-
-Every report should work.
-
-The application should be deployable immediately after I provide my Supabase credentials.
-
-The final deliverable must be a SINGLE COMPLETE ZIP FILE.
-
-
-All UI must consistently follow this branding.
-APPLICATION PURPOSE
-This application is NOT a Bible application.
-
-Users already read using their own physical Bible or another Bible app.
-
-This application only manages
-
-• Daily Reading Plan
-• Reading Completion
-• Reading Progress
-• Community Leaderboard
-• Church Announcements
-
-No Bible text should be stored inside this application.
-
-No Audio Bible.
-
-No Bible API.
-
-No Bible Search.
-PROJECT ARCHITECTURE
-Use enterprise architecture.
-
-Frontend
-
-React
-
-Reusable Components
-
-Feature Based Folder Structure
-
-Backend
-
-FastAPI
-
-Service Layer
-
-Repository Layer
-
-Database Layer
-
-API Layer
-
-Dependency Injection
-
-Proper Logging
-
-Central Exception Handling
-
-Typed DTOs
-
-Validation
-
-Never place business logic inside controllers.
-DATABASE REQUIREMENTS
-Design a production-grade normalized PostgreSQL database.
-
-Use UUID primary keys.
-
-Use timestamps.
-
-Use soft delete where appropriate.
-
-Use created_at
-
-updated_at
-
-deleted_at
-
-Use indexes.
-
-Use foreign keys.
-
-Use constraints.
-
-Generate migration files.
-
-Generate Supabase SQL.
-
-Everything should be production ready.
-USER AUTHENTICATION
-Login using User ID only.
-
-Example
-
-REH001
-
-No password.
-
-After login
-
-Issue JWT.
-
-Store securely.
-
-Refresh automatically.
-
-Logout clears session.
-
-Protected routes.
-
-Role based authorization.
-CSV IMPORT
-CSV Import is one of the most important modules.
-
-Support
-
-users.csv
-
-reading_plan.csv
-
-progress.csv
-
-The import system must
-
-Preview data
-
-Validate
-
-Detect duplicate rows
-
-Upsert records
-
-Rollback if failed
-
-Show summary
-
-Generate import log
-
-Store import history
-
-Allow re-import safely
-
-Support thousands of records.
-
-Must not create duplicate progress.
-
-Automatically recalculate
-
-Current Streak
-
-Longest Streak
-
-Completion %
-
-Leaderboard
+Members
 
 Reports
 
-Statistics
+Analytics
 
-Everything automatically.
-USER EXPERIENCE
-Design should look like
+Audit Logs
 
-Apple
+Settings
 
-Linear
+Profile
 
-Notion
+---
 
-Headspace
+## Admin Portal
 
-Minimal
-
-Modern
-
-Beautiful
-
-Clean
-
-Large spacing
-
-Rounded cards
-
-Soft shadows
-
-Smooth animations
-
-No Material Design look.
-
-Mobile First.
-
-Responsive.
-
-PWA Ready.
-PERFORMANCE
-Application should easily support
-
-1000+
-
-Concurrent users.
-
-Lazy loading
-
-Code splitting
-
-Virtualized tables
-
-Image optimization
-
-Caching
-
-Optimized SQL
-
-Pagination
-
-Debounced search
-
-Background sync
-
-Offline capable PWA.
-ADMIN FEATURES
 Dashboard
 
 Members
 
-Reading Plan
+Reading Plans
 
-Reports
+Progress
+
+Rewards
 
 Announcements
 
-CSV Import
+Reports
+
+Leaderboard
 
 Settings
 
-Audit Logs
+Profile
 
-Everything must support CRUD.
+---
 
-Bulk actions.
+## Member Portal
 
-Search.
+Home
 
-Pagination.
+Today's Reading
 
-Filters.
+Progress
 
-Export Excel.
+Calendar
 
-Export CSV.
+Rewards
 
-Responsive.
-REPORTS
-Generate
+Leaderboard
 
-Daily Report
+Announcements
 
-Weekly Report
+Profile
 
-Monthly Report
+---
 
-Yearly Report
+# UI Requirements
 
-Member Report
+Use a modern Apple-inspired premium UI with:
 
-Inactive Members
+* Glassmorphism where appropriate
+* Soft shadows and rounded cards
+* Responsive layouts for desktop, tablet, and mobile
+* Dark and Light themes
+* Smooth Framer Motion animations
+* Consistent spacing and typography
+* Accessible color contrast and keyboard navigation
+* Reusable component library
 
-Most Consistent Readers
+Each role (Super User, Admin, Member) must have its own distinct dashboard layout and navigation while maintaining a consistent brand identity.
 
-Top Readers
+---
+
+# Performance
+
+The application must support:
+
+* 10,000+ Admin organizations
+* 1,000,000+ Members
+* 100,000+ daily active users
+* High-performance server-side pagination
+* Optimized database indexing
+* Query caching
+* Lazy loading
+* Virtualized tables
+* Background jobs for reports and notifications
+
+---
+
+# Technology Stack
+
+* **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS + Framer Motion + TanStack Query + Zustand
+* **Backend:** FastAPI + SQLAlchemy 2.0 + Alembic + Pydantic v2
+* **Database:** PostgreSQL (Supabase)
+* **Authentication:** Supabase Auth (Super User & Admin), custom Member authentication
+* **Storage:** Supabase Storage
+* **Realtime:** Supabase Realtime
+* **Deployment:** Vercel (Frontend), Render/Fly.io (Backend), Supabase (Database)
+
+---
+
+# Final Goal
+
+Transform the existing Bible Reading Progress Tracker into a **production-ready, enterprise-grade, multi-tenant SaaS platform** where a single **Super User** manages multiple independent organizations, each **Admin** manages only their own church or fellowship and its members, and each **Member** has a secure, personalized Bible reading experience. The system must enforce strict tenant isolation, role-based access control, Supabase Row Level Security, scalable architecture, comprehensive auditing, and a premium user experience suitable for deployment to thousands of churches and ministries worldwide.
+
+
+
+# Enterprise UI/UX Design Prompt – Apple Liquid Glass Bible Reading Progress Tracker
+
+Design and rebuild the entire **Rooted – Bible Reading Progress Tracker** as a **premium Apple-inspired application** using the latest **Liquid Glass design language** (inspired by Apple's newest UI philosophy). The application should feel elegant, premium, modern, calm, and spiritually uplifting while remaining highly performant and production-ready.
+
+This is **not** a basic CRUD application. It should feel like a premium native Apple application, similar to Apple Fitness, Apple Health, Apple Wallet, Apple Music, and Apple Journal.
+
+The UI should combine **Liquid Glass**, **soft translucency**, **dynamic depth**, **glass reflections**, **fluid animations**, **micro interactions**, **premium typography**, and **minimalism**.
+
+---
+
+# Overall Design Philosophy
+
+The design should communicate:
+
+* Growth
+* Faith
+* Consistency
+* Peace
+* Achievement
+* Motivation
+* Community
+
+Every screen should feel clean with plenty of white space, subtle gradients, and premium animations.
+
+Avoid clutter.
+
+Every interaction should feel smooth.
+
+---
+
+# Apple Liquid Glass Design System
+
+Implement Apple's newest Liquid Glass design language throughout the application.
+
+Features include:
+
+* Frosted glass cards
+* Dynamic translucent navigation bars
+* Soft reflections
+* Layered depth
+* Dynamic blur backgrounds
+* Floating UI elements
+* Rounded continuous corners (28–36px radius)
+* Glass morphism with realistic light refraction
+* Adaptive light/dark mode
+* Smooth spring animations
+* Premium easing curves
+* Soft shadows
+* Floating bottom navigation
+* Interactive glass buttons
+* Animated gradients
+* Frosted modals
+* Glass sidebars
+* Floating action buttons
+* Dynamic hover states
+* Subtle glow effects
+* Beautiful loading skeletons
+* Glass notification toasts
+
+The application should feel like a native Apple application rather than a typical web application.
+
+---
+
+# Visual Style
+
+Color Palette
+
+Primary
+
+Forest Green
+
+Fresh Green
+
+Emerald
+
+Accent Gold
+
+Warm White
+
+Glass White
+
+Soft Gray
+
+Dark Graphite
+
+Background
+
+Use soft gradients with blurred floating shapes.
+
+Example
+
+White → Soft Green → Frosted Blur
+
+Avoid flat backgrounds.
+
+---
+
+# Typography
+
+Use premium typography.
+
+Examples
+
+SF Pro Display
+
+Inter
+
+Geist
+
+Large bold headers
+
+Minimal labels
+
+Perfect spacing
+
+Excellent readability
+
+---
+
+# Icons
+
+Use premium outline icons.
+
+Rounded icons.
+
+Apple-like icons.
+
+No heavy icons.
+
+Use animated icons where appropriate.
+
+---
+
+# Animations
+
+Every interaction should animate.
+
+Examples
+
+Card hover
+
+Card expansion
+
+Button press
+
+Completion celebration
+
+Achievement unlocked
+
+Leaderboard update
+
+Progress increase
+
+Streak increment
+
+Page transitions
+
+Loading animations
+
+Micro interactions
+
+Confetti celebrations
+
+Floating particles
+
+Spring animations
+
+Everything should feel alive.
+
+---
+
+# Dashboard Design
+
+Every dashboard should contain beautiful glass widgets.
+
+Examples
+
+Today's Reading
+
+Current Streak
+
+Weekly Progress
+
+Monthly Progress
 
 Completion %
 
+Achievements
+
+Rewards
+
+Leaderboard Position
+
+Recent Activity
+
+Reading Calendar
+
+Reading Heatmap
+
+Upcoming Reading
+
+Announcements
+
+Charts
+
+Every card should have:
+
+Glass background
+
+Blur
+
+Shadow
+
+Gradient border
+
+Animated number counters
+
+Floating icon
+
+---
+
+# Member Experience
+
+The Member dashboard should feel like Apple Fitness.
+
+The homepage should immediately motivate users to continue reading.
+
+Show
+
+Today's Bible Reading
+
+Continue Reading button
+
+Reading Progress Ring
+
+Weekly Progress Ring
+
+Current Streak
+
+Longest Streak
+
+Achievement Showcase
+
+Recent Badges
+
+Reading Calendar
+
+Motivational Verse
+
+Upcoming Reading
+
+Announcements
+
+Daily Encouragement
+
+Everything should animate beautifully.
+
+---
+
+# Achievement System
+
+Build a comprehensive gamified achievement and badge system to encourage consistent Bible reading.
+
+Achievements should unlock automatically when milestones are reached.
+
+Each badge must have:
+
+* Premium glass icon
+* Gold accents
+* Beautiful illustration
+* Unlock animation
+* Confetti celebration
+* Progress tracker
+* Description
+* Date earned
+
+Members should have a dedicated **Achievements Gallery** where all earned and locked badges are displayed in a collectible showcase.
+
+---
+
+# Achievement Categories
+
+## Streak Achievements
+
+* 🔥 First Day
+* 🔥 3 Day Streak
+* 🔥 7 Day Streak
+* 🔥 14 Day Streak
+* 🔥 30 Day Streak
+* 🔥 50 Day Streak
+* 🔥 100 Day Streak
+* 🔥 180 Day Streak
+* 🔥 365 Day Streak
+* 🔥 Faithful Reader
+* 🔥 Never Missed
+* 🔥 Consistency Champion
+
+---
+
+## Weekly Completion Badges
+
+Members receive a premium badge every time they complete an entire week's reading.
+
+Examples:
+
+Week 1 Completed
+
+Week 2 Completed
+
+Week 3 Completed
+
+Week 4 Completed
+
+52 Week Champion
+
+These badges should display a beautiful gold laurel wreath with a green checkmark and glass finish.
+
+---
+
+## Monthly Achievements
+
+* January Completed
+* February Completed
+* March Completed
+* …
+* December Completed
+
+Special:
+
+12 Month Champion
+
+---
+
+## Bible Reading Progress
+
+* 10 Chapters Read
+* 25 Chapters Read
+* 50 Chapters Read
+* 100 Chapters Read
+* 250 Chapters Read
+* 500 Chapters Read
+* 1000 Chapters Read
+
+---
+
+## Book Completion Badges
+
+Each completed Bible book earns a unique illustrated badge.
+
+Examples:
+
+Genesis Explorer
+
+Matthew Disciple
+
+Romans Scholar
+
+Psalms Worshipper
+
+Acts Messenger
+
+Revelation Finisher
+
+Each book should have its own premium icon inspired by its theme.
+
+---
+
+## New Testament Milestones
+
+* First Gospel Completed
+* Four Gospels Completed
+* Paul's Letters Completed
+* Entire New Testament Completed
+
+---
+
+## Community Achievements
+
+Top 10 Reader
+
+Top 5 Reader
+
+Top 3 Reader
+
+#1 Reader
+
+Perfect Attendance
+
+Encourager
+
+Consistent Member
+
+---
+
+## Special Celebration Badges
+
+Easter Reader
+
+Christmas Reader
+
+Good Friday Reader
+
+Bible Month Champion
+
+Church Anniversary Reading
+
+Vacation Without Missing
+
+Morning Reader
+
+Night Reader
+
+Weekend Warrior
+
+---
+
+## Hidden Legendary Badges
+
+Secret achievements that are unlocked unexpectedly.
+
+Examples
+
+Early Bird
+
+Night Watch
+
+Grace Upon Grace
+
+Faithful Servant
+
+Rooted in Christ
+
+Walking with God
+
+The user should discover these naturally.
+
+---
+
+# Achievement Animations
+
+When a badge is unlocked:
+
+* Glass popup appears
+* Background softly blurs
+* Badge rotates into view
+* Gold particles appear
+* Leaves float upward
+* Confetti animation
+* Soft haptic feedback (mobile)
+* Achievement sound (optional)
+* "Achievement Unlocked" banner
+* Automatically added to profile
+
+This experience should feel similar to unlocking an achievement in Apple Fitness or completing an Apple Activity Ring.
+
+---
+
+# Profile Page
+
+The profile should become a personal showcase.
+
+Display:
+
+Large profile image
+
+Current Level
+
+Reading Streak
+
+Total Chapters
+
+Completion %
+
+Favorite Book
+
+Achievement Collection
+
+Recent Badges
+
+Longest Streak
+
+Weekly Performance
+
+Monthly Performance
+
+Reading Calendar Heatmap
+
 Reading Statistics
 
-Download Excel
+Member Rank
 
-Download CSV
+Beautiful achievement gallery with horizontal scrolling glass cards.
 
-Print Friendly
-NOTIFICATIONS
-Prepare notification architecture.
+---
 
-Although push notifications are not required now,
+# Leaderboard
 
-design the application so that Firebase or OneSignal can be integrated later without major refactoring.
-CODE QUALITY
-Professional coding standards.
+Beautiful Apple-style leaderboard.
 
-Reusable components.
+Top 3 users displayed as large floating glass podium cards with gold, silver, and bronze styling.
 
-Reusable hooks.
+Remaining members displayed as elegant glass list cards.
 
-Reusable services.
+Animate rank changes.
 
-Reusable utilities.
+Show badges beside names.
 
-Feature folders.
+---
 
-Strict TypeScript.
+# Rewards
 
-ESLint.
+Instead of plain points, use:
 
-Prettier.
+Faith Points (FP)
 
-Zero duplicate code.
+Members earn Faith Points for:
 
-Meaningful naming.
+Daily reading
 
-Professional comments only where required.
+Weekly completion
 
-No generated garbage.
+Monthly completion
 
-No placeholder code.
+Streak milestones
 
-No TODO comments.
-ERROR HANDLING
-Every API must return
+Special events
 
-Success
+Faith Points unlock cosmetic profile frames, badge borders, themes, and milestone rewards.
 
-Failure
+---
 
-Validation errors
+# Navigation
 
-Authentication errors
+Floating bottom navigation bar with Liquid Glass styling.
 
-Authorization errors
+Smooth page transitions.
 
-Proper HTTP status codes
+Blurred floating top app bar.
 
-Proper messages
+Floating profile button.
 
-Frontend should show elegant toast notifications.
+Animated active indicators.
 
-Never crash.
-TESTING
-Create
+---
 
-Backend tests
+# Dark Mode
 
-Frontend tests
+Create an exceptional dark mode.
 
-CSV import tests
-
-API tests
-
-Authentication tests
-
-Validation tests
-
-Critical workflows.
-
-Everything should pass.
-README
-README must include
-
-Project Overview
-
-Architecture
-
-Folder Structure
-
-Installation
-
-Supabase Setup
-
-Environment Variables
-
-Run Instructions
-
-Deployment
-
-CSV Import
-
-Troubleshooting
-
-Screenshots
-
-Future Roadmap
-FUTURE EXTENSIBILITY
-Structure the application so that future modules can be added without changing the architecture.
-
-Possible future modules
-
-Attendance
-
-Events
-
-Prayer Requests
-
-AI Devotions
-
-Bible Notes
-
-Church Groups
-
-Push Notifications
-
-Multi-Church Support
-
-Donation Module
-
-Admin Analytics
-
-Design the architecture with scalability in mind.
-FINAL OUTPUT
-Instead of:
-Generate the ENTIRE production-ready project as a SINGLE COMPLETE ZIP FILE.
 Use:
-Generate the complete production-ready project in the Claude Code workspace.
 
-Create every required file and folder.
+Graphite
 
-Continue until the entire application is implemented.
+Black Glass
 
-Do not stop after generating only part of the project.
+Emerald Glow
 
-The final project must compile, run, and be ready for deployment after Supabase credentials are provided.
+Soft White Text
 
-No placeholder implementations.
+Golden Highlights
 
-No TODOs.
+No harsh colors.
 
-Every feature described in this specification must be fully functional.
-This wording aligns much better with how Claude Code actually operates and will generally produce more reliable results than asking for a single ZIP in one response.
+Everything should maintain readability and elegance.
+
+---
+
+# Accessibility
+
+Support:
+
+Large text
+
+Keyboard navigation
+
+High contrast
+
+Reduced motion
+
+Screen readers
+
+Accessible color ratios
+
+---
+
+# Technical Requirements
+
+* React 19
+* TypeScript
+* Tailwind CSS
+* Framer Motion
+* Motion One where appropriate
+* Lucide Icons
+* React Spring for fluid interactions
+* CSS backdrop-filter for Liquid Glass
+* Reusable design system and component library
+* Responsive layouts for mobile, tablet, and desktop
+* Optimized performance with lazy loading and code splitting
+
+---
+
+# Final Goal
+
+Create a **world-class, Apple-quality Bible Reading Progress Tracker** that feels like a premium native application rather than a web app. Every interaction should inspire users to stay consistent in their Bible reading through beautiful Liquid Glass visuals, meaningful animations, and a rewarding achievement system. The experience should motivate members to build lifelong reading habits while giving Super Users and Admins elegant, enterprise-grade dashboards. The final product should be polished enough to be featured on the App Store and serve thousands of churches worldwide with a delightful, accessible, and highly performant user experience.
